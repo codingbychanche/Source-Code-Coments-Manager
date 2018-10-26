@@ -75,7 +75,7 @@ while read path
 do
     if [ -f "$path" ]
     then
-	result="$(cat $path | egrep -o -n "(@rem:.+){1}({(.+)?})?(@@){1}")" # This is the sane search pattern used later to disply the result, if any.....
+	result="$(cat "$path" | egrep -o -n "(@rem:.+){1}({(.+)?})?(@@){1}")" # This is the sane search pattern used later to disply the result, if any.....
 	if [ $? -eq 0 ] # @rem:Bash shell: '$?' contains the result of the last operation 0=OK// 1= Error or no result......@@
 	then
 	    echo "{"
