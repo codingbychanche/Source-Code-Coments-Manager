@@ -11,9 +11,10 @@
 buildFileList()
 {
     echo "Buliding file list...."
-    find . -name "*.c" > getComentsFileList
-    find . -name "*.java" >> getComentsFileList
-    find . -name "*.xml"  >> getComentsFileList
+    find . -name \*.c > getComentsFileList
+    find . -name \*.java >> getComentsFileList
+    find . -name \*.xml  >> getComentsFileList
+    find . -name \*.sh  >> getComentsFileList
 }
 
 
@@ -54,37 +55,40 @@ read answer
 if [ "$answer" = "y" ] || [ "$answer" ="Y" ]
 then
      buildFileList
-else
-    if [ "$answer" = "n" ] || [ "$answer" ="N" ]
+fi
+
+if [ "$answer" = "n" ] || [ "$answer" ="N" ]
+then
+    if [ -f "getComentsFileList" ]
     then
-	if [ -f "getComentsFileList" ]
-	then
-	    echo "using existing 'result' list...."
-	else
-	    echo "No file list found. Building file list now!"
-	    buildFileList
-	fi
+	echo "using existing 'result' list...."
+    else
+	echo "No file list found. Building file list now!"
+	buildFileList
     fi
 fi
 
 resetEscapes
-echo ""
-echo "Begin of Directory:"
 
+echo ""
 while read path
 do
-    echo "{"
-    if [ -f $path ]
+    if [ -f "$path" ]
     then
-	echo "$path"
-	cat $path | egrep -o "(@rem:.+){1}({(.+)?})?(@@){1}"
-	let "filesFound=filesFound+1"
+	result="$(cat $path | egrep -o -n "(@rem:.+){1}({(.+)?})?(@@){1}")" # This is the sane search pattern used later to disply the result, if any.....
+	if [ $? -eq 0 ] # @rem:Bash shell: '$?' contains the result of the last operation 0=OK// 1= Error or no result......@@
+	then
+	    echo "{"
+	    echo "$path"
+	    cat $path | egrep -o -n "(@rem:.+){1}({(.+)?})?(@@){1}"
+	    let "filesFound=filesFound+1"
+	    echo "}"
+	fi
     else
 	echo "$0 error: file $path does not exist" >> getComentsErrorLog
     	echo ""
 	let "errors=errors+1"
     fi
-    echo "}"
 done < getComentsFileList
 
 textColorBlue
@@ -92,18 +96,6 @@ echo ""
 if [ $errors -gt 0 ]
 then
     echo "$0 done, with errors ($errors). See 'getComentsErrorLog'"
-else
-    echo "$0 done, no errors. Files with coments found:$filesFound"
-    if [ $filesFound -eq 0 ]
-    then
-	echo "No files containing coments where found" >> getComentsFileList
-    fi
 fi
+echo "$0 done, no errors. Files with coments found:$filesFound"
 resetEscapes
-
-# The following pattern works
-# cat $(find . -name "*.c") | egrep -o "@comment:.+"
-
-# The following pattern is not working....
-# cat SampelCode.c | egrep "(@{1}((comment:)[\w\d ]{0,})(@[\w,]{0,}@){1}){1}"
-
