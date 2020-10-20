@@ -1,0 +1,26 @@
+{
+./Sample/Another file.c
+1:@rem:The file name contains spaces....@@
+}
+{
+./Sample/SampleCode.c
+6:@rem:This is a coment @@
+7:@rem:Another coment@@
+}
+{
+./Sample/Java.java
+1:@rem: A legitimate coment@@
+}
+{
+./Sample/Another file.c
+1:@rem:The file name contains spaces....@@
+}
+{
+./Sample/SampleCode.c
+6:@rem:This is a coment @@
+7:@rem:Another coment@@
+}
+{
+./Sample/Java.java
+1:@rem: A legitimate coment@@
+}
